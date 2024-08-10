@@ -32,5 +32,3 @@ const Page: NextPage<Props> = (props: Props) => {
 };
 
 export default Page;
-
-export { batch as getServerSideProps } from 'nextjs/getServerSideProps';

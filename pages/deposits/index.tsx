@@ -28,5 +28,3 @@ const Page: NextPage = () => {
 };
 
 export default Page;
-
-export { deposits as getServerSideProps } from 'nextjs/getServerSideProps';

@@ -4,7 +4,7 @@
   "private": false,
   "homepage": "https://github.com/blockscout/frontend#readme",
   "engines": {
-    "node": "20.11.0",
+    "node": "20.16.0",
     "npm": "10.2.4"
   },
   "scripts": {
@@ -45,13 +45,6 @@
     "@metamask/providers": "^10.2.1",
     "@monaco-editor/react": "^4.4.6",
     "@next/bundle-analyzer": "^14.0.1",
-    "@opentelemetry/auto-instrumentations-node": "^0.39.4",
-    "@opentelemetry/exporter-metrics-otlp-proto": "^0.45.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.45.0",
-    "@opentelemetry/resources": "^1.18.0",
-    "@opentelemetry/sdk-node": "^0.45.0",
-    "@opentelemetry/sdk-trace-node": "^1.18.0",
-    "@opentelemetry/semantic-conventions": "^1.18.0",
     "@sentry/cli": "^2.21.2",
     "@sentry/react": "7.24.0",
     "@sentry/tracing": "7.24.0",

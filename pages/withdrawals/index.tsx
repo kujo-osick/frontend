@@ -33,5 +33,3 @@ const Page: NextPage = () => {
 };
 
 export default Page;
-
-export { withdrawals as getServerSideProps } from 'nextjs/getServerSideProps';

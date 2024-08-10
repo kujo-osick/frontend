@@ -16,5 +16,3 @@ const Page: NextPage<Props> = (props: Props) => {
 };
 
 export default Page;
-
-export { userOps as getServerSideProps } from 'nextjs/getServerSideProps';
