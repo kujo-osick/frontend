@@ -34,5 +34,3 @@ const Page: NextPage = () => {
 };
 
 export default Page;
-
-export { rollup as getServerSideProps } from 'nextjs/getServerSideProps';

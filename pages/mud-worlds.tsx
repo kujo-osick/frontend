@@ -4,16 +4,14 @@ import React from 'react';
 
 import PageNextJs from 'nextjs/PageNextJs';
 
-const MudWorlds = dynamic(() => import('ui/pages/MudWorlds'), { ssr: false });
+const PublicTags = dynamic(() => import('ui/pages/PublicTags'), { ssr: false });
 
 const Page: NextPage = () => {
   return (
-    <PageNextJs pathname="/mud-worlds">
-      <MudWorlds/>
+    <PageNextJs pathname="/account/public-tags-request">
+      <PublicTags/>
     </PageNextJs>
   );
 };
 
 export default Page;
-
-export { mud as getServerSideProps } from 'nextjs/getServerSideProps';

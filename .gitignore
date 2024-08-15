@@ -12,10 +12,6 @@
 # next.js
 /.next/
 /out/
-/public/assets/envs.js
-/public/assets/configs
-/public/icons/sprite.svg
-/public/icons/README.md
 /analyze
 
 # production
@@ -55,6 +51,3 @@ yarn-error.log*
 /playwright/affected-tests.txt
 
 **.dec**
-
-# build outputs
-/tools/preset-sync/index.js
