@@ -32,7 +32,7 @@ window.__envs = {
     NEXT_PUBLIC_NETWORK_LOGO: "https://uploads-ssl.webflow.com/667bc96c8b26037c3feca0d0/668cf15d51e18efe81535db4_MATCHAIN_PUBLIC_LOGO_DARK.png",
     NEXT_PUBLIC_HOMEPAGE_SHOW_AVG_BLOCK_TIME: "true",
     NEXT_PUBLIC_NETWORK_NAME: "Matchain Testnet",
-    NEXT_PUBLIC_NETWORK_RPC_URL: "https://rpc-testnet.matchain.io",
+    NEXT_PUBLIC_NETWORK_RPC_URL: "https://testnet-rpc.matchain.io",
     NEXT_PUBLIC_HOMEPAGE_PLATE_TITLE: "Matchain Testnet Explorer ",
     NEXT_PUBLIC_APP_PORT: "443",
     NEXT_PUBLIC_IS_TESTNET: "true",
