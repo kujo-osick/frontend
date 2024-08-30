@@ -2,7 +2,6 @@ import {
   Flex,
   Button,
   chakra,
-  Popover,
   PopoverTrigger,
   PopoverBody,
   PopoverContent,
@@ -14,6 +13,7 @@ import {
 import React from 'react';
 
 import config from 'configs/app';
+import Popover from 'ui/shared/chakra/Popover';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkExternal from 'ui/shared/links/LinkExternal';
 
@@ -61,6 +61,7 @@ const ContractCodeIde = ({ className, hash, isLoading }: Props) => {
           variant="outline"
           colorScheme="gray"
           onClick={ onToggle }
+          isActive={ isOpen }
           aria-label="Open source code in IDE"
           fontWeight={ 500 }
           px={ 2 }

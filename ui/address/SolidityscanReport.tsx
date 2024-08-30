@@ -1,4 +1,4 @@
-import { Box, Text, Icon, Popover, PopoverTrigger, PopoverContent, PopoverBody, useDisclosure } from '@chakra-ui/react';
+import { Box, Text, Icon, PopoverTrigger, PopoverContent, PopoverBody, useDisclosure } from '@chakra-ui/react';
 import React from 'react';
 
 // This icon doesn't work properly when it is in the sprite
@@ -7,6 +7,7 @@ import React from 'react';
 import solidityScanIcon from 'icons/brands/solidity_scan.svg';
 import useApiQuery from 'lib/api/useApiQuery';
 import { SOLIDITYSCAN_REPORT } from 'stubs/contract';
+import Popover from 'ui/shared/chakra/Popover';
 import LinkExternal from 'ui/shared/links/LinkExternal';
 import SolidityscanReportButton from 'ui/shared/solidityscanReport/SolidityscanReportButton';
 import SolidityscanReportDetails from 'ui/shared/solidityscanReport/SolidityscanReportDetails';
@@ -24,6 +25,7 @@ const SolidityscanReport = ({ hash }: Props) => {
     queryOptions: {
       enabled: Boolean(hash),
       placeholderData: SOLIDITYSCAN_REPORT,
+      retry: 0,
     },
   });
 
@@ -44,12 +46,13 @@ const SolidityscanReport = ({ hash }: Props) => {
           score={ score }
           isLoading={ isPlaceholderData }
           onClick={ onToggle }
+          isActive={ isOpen }
         />
       </PopoverTrigger>
       <PopoverContent w={{ base: '100vw', lg: '328px' }}>
         <PopoverBody px="26px" py="20px" fontSize="sm">
           <Box mb={ 5 } lineHeight="25px">
-            Contract analyzed for 160+ vulnerability patterns by
+            Contract analyzed for 240+ vulnerability patterns by
             <Icon as={ solidityScanIcon } mr={ 1 } ml="6px" w="23px" h="20px" display="inline-block" verticalAlign="middle"/>
             <Text fontWeight={ 600 } display="inline-block">SolidityScan</Text>
           </Box>

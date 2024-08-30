@@ -1,10 +1,11 @@
-import { Grid, GridItem, Text, Link, Box, Tooltip, useColorModeValue, Skeleton } from '@chakra-ui/react';
+import { Grid, GridItem, Text, Link, Box, Tooltip, Skeleton } from '@chakra-ui/react';
 import BigNumber from 'bignumber.js';
 import capitalize from 'lodash/capitalize';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { scroller, Element } from 'react-scroll';
 
+import { ARBITRUM_L2_TX_BATCH_STATUSES } from 'types/api/arbitrumL2';
 import { ZKSYNC_L2_TX_BATCH_STATUSES } from 'types/api/zkSyncL2';
 
 import { route } from 'nextjs-routes';
@@ -12,23 +13,26 @@ import { route } from 'nextjs-routes';
 import config from 'configs/app';
 import getBlockReward from 'lib/block/getBlockReward';
 import { GWEI, WEI, WEI_IN_GWEI, ZERO } from 'lib/consts';
+import getArbitrumVerificationStepStatus from 'lib/getArbitrumVerificationStepStatus';
 import { space } from 'lib/html-entities';
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { currencyUnits } from 'lib/units';
+import BlockGasUsed from 'ui/shared/block/BlockGasUsed';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import * as DetailsInfoItem from 'ui/shared/DetailsInfoItem';
 import DetailsInfoItemDivider from 'ui/shared/DetailsInfoItemDivider';
 import DetailsTimestamp from 'ui/shared/DetailsTimestamp';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import BatchEntityL2 from 'ui/shared/entities/block/BatchEntityL2';
-import GasUsedToTargetRatio from 'ui/shared/GasUsedToTargetRatio';
+import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
+import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
 import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 import IconSvg from 'ui/shared/IconSvg';
 import LinkInternal from 'ui/shared/links/LinkInternal';
 import PrevNext from 'ui/shared/PrevNext';
 import RawDataSnippet from 'ui/shared/RawDataSnippet';
-import TextSeparator from 'ui/shared/TextSeparator';
+import StatusTag from 'ui/shared/statusTag/StatusTag';
 import Utilization from 'ui/shared/Utilization/Utilization';
 import VerificationSteps from 'ui/shared/verificationSteps/VerificationSteps';
 import ZkSyncL2TxnBatchHashesInfo from 'ui/txnBatches/zkSyncL2/ZkSyncL2TxnBatchHashesInfo';
@@ -46,8 +50,6 @@ const BlockDetails = ({ query }: Props) => {
   const [ isExpanded, setIsExpanded ] = React.useState(false);
   const router = useRouter();
   const heightOrHash = getQueryParamString(router.query.height_or_hash);
-
-  const separatorColor = useColorModeValue('gray.200', 'gray.700');
 
   const { data, isPlaceholderData } = query;
 
@@ -184,6 +186,36 @@ const BlockDetails = ({ query }: Props) => {
         />
       </DetailsInfoItem.Value>
 
+      { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && (
+        <>
+          <DetailsInfoItem.Label
+            hint="The most recent L1 block height as of this L2 block"
+            isLoading={ isPlaceholderData }
+          >
+            L1 block height
+          </DetailsInfoItem.Label>
+          <DetailsInfoItem.Value>
+            <BlockEntityL1 isLoading={ isPlaceholderData } number={ data.arbitrum.l1_block_height }/>
+          </DetailsInfoItem.Value>
+        </>
+      ) }
+
+      { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && !config.UI.views.block.hiddenFields?.batch && (
+        <>
+          <DetailsInfoItem.Label
+            hint="Batch number"
+            isLoading={ isPlaceholderData }
+          >
+          Batch
+          </DetailsInfoItem.Label>
+          <DetailsInfoItem.Value>
+            { data.arbitrum.batch_number ?
+              <BatchEntityL2 isLoading={ isPlaceholderData } number={ data.arbitrum.batch_number }/> :
+              <Skeleton isLoaded={ !isPlaceholderData }>Pending</Skeleton> }
+          </DetailsInfoItem.Value>
+        </>
+      ) }
+
       <DetailsInfoItem.Label
         hint="Size of the block in bytes"
         isLoading={ isPlaceholderData }
@@ -251,7 +283,9 @@ const BlockDetails = ({ query }: Props) => {
           </DetailsInfoItem.Value>
         </>
       ) }
-      { rollupFeature.isEnabled && rollupFeature.type === 'zkSync' && data.zksync && !config.UI.views.block.hiddenFields?.L1_status && (
+      { !config.UI.views.block.hiddenFields?.L1_status && rollupFeature.isEnabled &&
+        ((rollupFeature.type === 'zkSync' && data.zksync) || (rollupFeature.type === 'arbitrum' && data.arbitrum)) &&
+      (
         <>
           <DetailsInfoItem.Label
             hint="Status is the short interpretation of the batch lifecycle"
@@ -260,7 +294,16 @@ const BlockDetails = ({ query }: Props) => {
             Status
           </DetailsInfoItem.Label>
           <DetailsInfoItem.Value>
-            <VerificationSteps steps={ ZKSYNC_L2_TX_BATCH_STATUSES } currentStep={ data.zksync.status } isLoading={ isPlaceholderData }/>
+            { rollupFeature.type === 'zkSync' && data.zksync &&
+              <VerificationSteps steps={ ZKSYNC_L2_TX_BATCH_STATUSES } currentStep={ data.zksync.status } isLoading={ isPlaceholderData }/> }
+            { rollupFeature.type === 'arbitrum' && data.arbitrum && (
+              <VerificationSteps
+                steps={ ARBITRUM_L2_TX_BATCH_STATUSES }
+                currentStep={ data.arbitrum.status }
+                currentStepPending={ getArbitrumVerificationStepStatus(data.arbitrum) === 'pending' }
+                isLoading={ isPlaceholderData }
+              />
+            ) }
           </DetailsInfoItem.Value>
         </>
       ) }
@@ -279,6 +322,42 @@ const BlockDetails = ({ query }: Props) => {
               isLoading={ isPlaceholderData }
             />
           </DetailsInfoItem.Value>
+        </>
+      ) }
+
+      { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' &&
+        (data.arbitrum?.commitment_transaction.hash || data.arbitrum?.confirmation_transaction.hash) &&
+      (
+        <>
+          <DetailsInfoItemDivider/>
+          { data.arbitrum?.commitment_transaction.hash && (
+            <>
+              <DetailsInfoItem.Label
+                hint="L1 transaction containing this batch commitment"
+                isLoading={ isPlaceholderData }
+              >
+                Commitment tx
+              </DetailsInfoItem.Label>
+              <DetailsInfoItem.Value>
+                <TxEntityL1 hash={ data.arbitrum?.commitment_transaction.hash } isLoading={ isPlaceholderData }/>
+                { data.arbitrum?.commitment_transaction.status === 'finalized' && <StatusTag type="ok" text="Finalized" ml={ 2 }/> }
+              </DetailsInfoItem.Value>
+            </>
+          ) }
+          { data.arbitrum?.confirmation_transaction.hash && (
+            <>
+              <DetailsInfoItem.Label
+                hint="L1 transaction containing confirmation of this batch"
+                isLoading={ isPlaceholderData }
+              >
+                Confirmation tx
+              </DetailsInfoItem.Label>
+              <DetailsInfoItem.Value>
+                <TxEntityL1 hash={ data.arbitrum?.confirmation_transaction.hash } isLoading={ isPlaceholderData }/>
+                { data.arbitrum?.commitment_transaction.status === 'finalized' && <StatusTag type="ok" text="Finalized" ml={ 2 }/> }
+              </DetailsInfoItem.Value>
+            </>
+          ) }
         </>
       ) }
 
@@ -330,18 +409,13 @@ const BlockDetails = ({ query }: Props) => {
         <Skeleton isLoaded={ !isPlaceholderData }>
           { BigNumber(data.gas_used || 0).toFormat() }
         </Skeleton>
-        <Utilization
-          ml={ 4 }
-          colorScheme="gray"
-          value={ BigNumber(data.gas_used || 0).dividedBy(BigNumber(data.gas_limit)).toNumber() }
+        <BlockGasUsed
+          gasUsed={ data.gas_used }
+          gasLimit={ data.gas_limit }
           isLoading={ isPlaceholderData }
+          ml={ 4 }
+          gasTarget={ data.gas_target_percentage }
         />
-        { data.gas_target_percentage && (
-          <>
-            <TextSeparator color={ separatorColor } mx={ 1 }/>
-            <GasUsedToTargetRatio value={ data.gas_target_percentage } isLoading={ isPlaceholderData }/>
-          </>
-        ) }
       </DetailsInfoItem.Value>
 
       <DetailsInfoItem.Label
@@ -596,6 +670,40 @@ const BlockDetails = ({ query }: Props) => {
                   />
                 </LinkInternal>
                 <CopyToClipboard text={ data.parent_hash }/>
+              </DetailsInfoItem.Value>
+            </>
+          ) }
+
+          { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && (
+            <>
+              <DetailsInfoItem.Label
+                hint="The cumulative number of L2 to L1 transactions as of this block"
+                isLoading={ isPlaceholderData }
+              >
+                Send count
+              </DetailsInfoItem.Label>
+              <DetailsInfoItem.Value>
+                { data.arbitrum.send_count.toLocaleString() }
+              </DetailsInfoItem.Value>
+
+              <DetailsInfoItem.Label
+                hint="The root of the Merkle accumulator representing all L2 to L1 transactions as of this block"
+                isLoading={ isPlaceholderData }
+              >
+                Send root
+              </DetailsInfoItem.Label>
+              <DetailsInfoItem.Value>
+                { data.arbitrum.send_root }
+              </DetailsInfoItem.Value>
+
+              <DetailsInfoItem.Label
+                hint="The number of delayed L1 to L2 messages read as of this block"
+                isLoading={ isPlaceholderData }
+              >
+                Delayed messages
+              </DetailsInfoItem.Label>
+              <DetailsInfoItem.Value>
+                { data.arbitrum.delayed_messages.toLocaleString() }
               </DetailsInfoItem.Value>
             </>
           ) }

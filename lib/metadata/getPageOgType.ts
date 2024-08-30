@@ -9,6 +9,8 @@ const OG_TYPE_DICT: Record<Route['pathname'], OGPageType> = {
   '/tx/[hash]': 'Regular page',
   '/blocks': 'Root page',
   '/block/[height_or_hash]': 'Regular page',
+  '/block/countdown': 'Regular page',
+  '/block/countdown/[height]': 'Regular page',
   '/accounts': 'Root page',
   '/address/[hash]': 'Regular page',
   '/verified-contracts': 'Root page',
@@ -46,15 +48,19 @@ const OG_TYPE_DICT: Record<Route['pathname'], OGPageType> = {
   '/name-domains/[name]': 'Regular page',
   '/validators': 'Root page',
   '/gas-tracker': 'Root page',
+  '/mud-worlds': 'Root page',
 
   // service routes, added only to make typescript happy
   '/login': 'Regular page',
+  '/sprite': 'Regular page',
   '/api/metrics': 'Regular page',
   '/api/log': 'Regular page',
   '/api/media-type': 'Regular page',
   '/api/proxy': 'Regular page',
   '/api/csrf': 'Regular page',
   '/api/healthz': 'Regular page',
+  '/api/config': 'Regular page',
+  '/api/sprite': 'Regular page',
   '/auth/auth0': 'Regular page',
   '/auth/unverified-email': 'Regular page',
 };

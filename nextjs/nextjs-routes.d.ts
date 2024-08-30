@@ -15,12 +15,14 @@ declare module "nextjs-routes" {
     | StaticRoute<"/accounts">
     | DynamicRoute<"/address/[hash]/contract-verification", { "hash": string }>
     | DynamicRoute<"/address/[hash]", { "hash": string }>
+    | StaticRoute<"/api/config">
     | StaticRoute<"/api/csrf">
     | StaticRoute<"/api/healthz">
     | StaticRoute<"/api/log">
     | StaticRoute<"/api/media-type">
     | StaticRoute<"/api/metrics">
     | StaticRoute<"/api/proxy">
+    | StaticRoute<"/api/sprite">
     | StaticRoute<"/api-docs">
     | DynamicRoute<"/apps/[id]", { "id": string }>
     | StaticRoute<"/apps">
@@ -31,6 +33,8 @@ declare module "nextjs-routes" {
     | StaticRoute<"/batches">
     | DynamicRoute<"/blobs/[hash]", { "hash": string }>
     | DynamicRoute<"/block/[height_or_hash]", { "height_or_hash": string }>
+    | DynamicRoute<"/block/countdown/[height]", { "height": string }>
+    | StaticRoute<"/block/countdown">
     | StaticRoute<"/blocks">
     | StaticRoute<"/contract-verification">
     | StaticRoute<"/csv-export">
@@ -40,6 +44,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/graphiql">
     | StaticRoute<"/">
     | StaticRoute<"/login">
+    | StaticRoute<"/mud-worlds">
     | DynamicRoute<"/name-domains/[name]", { "name": string }>
     | StaticRoute<"/name-domains">
     | DynamicRoute<"/op/[hash]", { "hash": string }>
@@ -47,6 +52,7 @@ declare module "nextjs-routes" {
     | StaticRoute<"/output-roots">
     | StaticRoute<"/public-tags/submit">
     | StaticRoute<"/search-results">
+    | StaticRoute<"/sprite">
     | StaticRoute<"/stats">
     | DynamicRoute<"/token/[hash]", { "hash": string }>
     | DynamicRoute<"/token/[hash]/instance/[id]", { "hash": string; "id": string }>

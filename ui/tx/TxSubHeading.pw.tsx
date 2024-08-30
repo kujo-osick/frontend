@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type { AddressMetadataInfo, AddressMetadataTagApi } from 'types/api/addressMetadata';
+import type { AddressParam } from 'types/api/addressParams';
 
 import config from 'configs/app';
 import { protocolTagWithMeta } from 'mocks/metadata/address';
@@ -55,13 +56,31 @@ test.describe('blockscout provider', () => {
     await expect(component).toHaveScreenshot();
   });
 
-  test('with interpretation and action button +@mobile +@dark-mode', async({ render, mockApiResponse, mockAssetResponse, mockFeatures }) => {
-    await mockFeatures([ [ 'action_button_exp', true ] ]);
+  test('with interpretation and action button +@mobile +@dark-mode', async({ render, mockApiResponse, mockAssetResponse }) => {
     const metadataResponse = generateAddressMetadataResponse(protocolTagWithMeta);
     await mockApiResponse('address_metadata_info', metadataResponse, { queryParams: addressMetadataQueryParams });
     await mockAssetResponse(protocolTagWithMeta?.meta?.appLogoURL as string, './playwright/mocks/image_s.jpg');
     await mockApiResponse('tx_interpretation', txInterpretation, { pathParams: { hash } });
     const component = await render(<TxSubHeading hash={ hash } hasTag={ false } txQuery={ txQuery }/>);
+    await expect(component).toHaveScreenshot();
+  });
+
+  test('with interpretation and recipient ENS domain', async({ render, mockApiResponse }) => {
+    const txData = {
+      ...txMock.base,
+      to: {
+        ...txMock.base.to,
+        hash: (txInterpretation.data.summaries[0].summary_template_variables.to_address.value as AddressParam).hash,
+        ens_domain_name: 'duckduck.eth',
+      },
+    };
+    const txWithEnsQuery = {
+      data: txData,
+      isPlaceholderData: false,
+      isError: false,
+    } as TxQuery;
+    await mockApiResponse('tx_interpretation', txInterpretation, { pathParams: { hash } });
+    const component = await render(<TxSubHeading hash={ hash } hasTag={ false } txQuery={ txWithEnsQuery }/>);
     await expect(component).toHaveScreenshot();
   });
 
@@ -76,9 +95,8 @@ test.describe('blockscout provider', () => {
   });
 
   test('with interpretation and view all link, and action button (external link) +@mobile', async({
-    render, mockApiResponse, mockAssetResponse, mockFeatures,
+    render, mockApiResponse, mockAssetResponse,
   }) => {
-    await mockFeatures([ [ 'action_button_exp', true ] ]);
     delete protocolTagWithMeta?.meta?.appID;
     const metadataResponse = generateAddressMetadataResponse(protocolTagWithMeta);
     await mockApiResponse('address_metadata_info', metadataResponse, { queryParams: addressMetadataQueryParams });
@@ -92,9 +110,8 @@ test.describe('blockscout provider', () => {
     await expect(component).toHaveScreenshot();
   });
 
-  test('no interpretation, has method called', async({ render, mockApiResponse, mockFeatures }) => {
+  test('no interpretation, has method called', async({ render, mockApiResponse }) => {
     // the action button should not render if there is no interpretation
-    await mockFeatures([ [ 'action_button_exp', true ] ]);
     const metadataResponse = generateAddressMetadataResponse(protocolTagWithMeta);
     await mockApiResponse('address_metadata_info', metadataResponse, { queryParams: addressMetadataQueryParams });
 
@@ -103,9 +120,8 @@ test.describe('blockscout provider', () => {
     await expect(component).toHaveScreenshot();
   });
 
-  test('no interpretation', async({ render, mockApiResponse, mockFeatures }) => {
+  test('no interpretation', async({ render, mockApiResponse }) => {
     // the action button should not render if there is no interpretation
-    await mockFeatures([ [ 'action_button_exp', true ] ]);
     const metadataResponse = generateAddressMetadataResponse(protocolTagWithMeta);
     await mockApiResponse('address_metadata_info', metadataResponse, { queryParams: addressMetadataQueryParams });
 

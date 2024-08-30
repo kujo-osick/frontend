@@ -7,7 +7,6 @@ import {
   Modal,
   ModalCloseButton,
   ModalContent,
-  Popover,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
@@ -22,6 +21,7 @@ import type { SmartContractExternalLibrary } from 'types/api/contract';
 
 import useIsMobile from 'lib/hooks/useIsMobile';
 import { apos } from 'lib/html-entities';
+import Popover from 'ui/shared/chakra/Popover';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import IconSvg from 'ui/shared/IconSvg';
 
@@ -65,6 +65,7 @@ const ContractExternalLibraries = ({ className, data, isLoading }: Props) => {
       variant="outline"
       colorScheme="gray"
       onClick={ onToggle }
+      isActive={ isOpen }
       fontWeight={ 600 }
       px={ 2 }
       aria-label="View external libraries"

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { FEATURED_NETWORKS_MOCK } from 'mocks/config/network';
 import * as statsMock from 'mocks/stats/index';
 import { test, expect } from 'playwright/lib';
 
@@ -30,6 +31,22 @@ test('with secondary coin price +@mobile', async({ render, mockApiResponse }) =>
   await expect(component).toHaveScreenshot();
 });
 
+test('with horizontal nav bar layout', async({ render, mockApiResponse, mockEnvs, mockConfigResponse, mockAssetResponse, page }) => {
+  const FEATURED_NETWORKS_URL = 'https://localhost:3000/featured-networks.json';
+
+  await mockApiResponse('stats', statsMock.base);
+  await mockEnvs([
+    [ 'NEXT_PUBLIC_NAVIGATION_LAYOUT', 'horizontal' ],
+    [ 'NEXT_PUBLIC_FEATURED_NETWORKS', FEATURED_NETWORKS_URL ],
+  ]);
+  await mockConfigResponse('NEXT_PUBLIC_FEATURED_NETWORKS', FEATURED_NETWORKS_URL, FEATURED_NETWORKS_MOCK);
+  await mockAssetResponse('https://localhost:3000/my-logo.png', './playwright/mocks/image_s.jpg');
+
+  const component = await render(<TopBar/>);
+  await component.getByLabel('Network menu').click();
+  await expect(page).toHaveScreenshot({ clip: { x: 0, y: 0, width: 1500, height: 500 } });
+});
+
 test('with DeFi dropdown +@dark-mode +@mobile', async({ render, page, mockApiResponse, mockEnvs }) => {
   await mockEnvs([
     [
@@ -43,4 +60,20 @@ test('with DeFi dropdown +@dark-mode +@mobile', async({ render, page, mockApiRes
 
   await component.getByText(/DeFi/i).click();
   await expect(page).toHaveScreenshot({ clip: { x: 0, y: 0, width: 1500, height: 220 } });
+});
+
+test('with Get gas button', async({ render, mockApiResponse, mockEnvs, mockAssetResponse }) => {
+  const ICON_URL = 'https://localhost:3000/my-icon.png';
+
+  await mockEnvs([
+    [
+      'NEXT_PUBLIC_GAS_REFUEL_PROVIDER_CONFIG',
+      `{"name": "Need gas?", "dapp_id": "duck", "url_template": "https://duck.url/{chainId}", "logo": "${ ICON_URL }"}`,
+    ],
+  ]);
+  await mockApiResponse('stats', statsMock.base);
+  await mockAssetResponse(ICON_URL, './playwright/mocks/image_svg.svg');
+
+  const component = await render(<TopBar/>);
+  await expect(component).toHaveScreenshot();
 });
